@@ -1,0 +1,43 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Añade aquí pasos de build específicos para tu proyecto si es necesario
+      # Por ejemplo, para un proyecto Node.js:
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: '18'
+      # - name: Install dependencies
+      #   run: npm ci
+      # - name: Build
+      #   run: npm run build
+      
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: . # Cambia esto a tu carpeta de build si es necesario (ej: 'dist', 'build', '_site')
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Create CNAME file
+        run: echo "aetechnologies.org" > CNAME
+        
+      - name: Deploy CNAME
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: .
+          target-folder: .
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Add CNAME file"
